@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include <random>
-#include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
 #include "snake.h"
@@ -11,11 +10,13 @@
 #include <mutex>
 #include <condition_variable>
 
+#include "board.h"
+
 namespace snake {
 
     class Game {
     public:
-        Game(std::size_t grid_width, std::size_t grid_height);
+        Game(const Board& board);
 
         void Run(Controller const &controller, Renderer &renderer,
                  std::size_t target_frame_duration);
@@ -28,11 +29,10 @@ namespace snake {
         std::mutex _mutex;
         std::condition_variable _condition;
 
-        //    std::unique_ptr<Snake> snake;
-        Snake snake;
-        SDL_Point food;
+        std::unique_ptr<snake::Snake> snake_ptr;
+        Snake_Point food;
 
-        std::unique_ptr<Random2DGenerator> random2DGenerator;
+        std::unique_ptr<Random2DGenerator> random_2d_ptr;
 
         int score{0};
 

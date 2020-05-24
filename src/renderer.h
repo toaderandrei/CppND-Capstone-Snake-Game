@@ -12,7 +12,7 @@ public:
 
     ~Renderer();
 
-    void Render(snake::Snake snake, Point const &food);
+    void Render(snake::Snake const &snake, Snake_Point const &food);
 
     void UpdateWindowTitle(int score, int fps);
 

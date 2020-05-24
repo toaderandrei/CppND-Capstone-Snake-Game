@@ -3,14 +3,38 @@
 
 #include <vector>
 #include "SDL.h"
+#include <memory>
+#include <deque>
+#include <mutex>
+#include <condition_variable>
+#include <stack>
 #include "snake_body.h"
+#include "board.h"
 
 namespace snake {
 
-    struct Position {
-        float x;
-        float y;
+    template<class T>
+    class SyncQueue {
+    public:
+        // constructors/destructors
+        SyncQueue();
+
+        ~SyncQueue();
+
+        // other public methods.
+
+        T remove();
+
+        void add(const T &msg);
+
+        std::deque<T> elements();
+
+    private:
+        std::deque<T> _queue;
+        std::condition_variable _condition_variable;
+        std::mutex _mutex_queue;
     };
+
 
     class Snake {
     public:
@@ -18,17 +42,13 @@ namespace snake {
             kUp, kDown, kLeft, kRight
         };
 
-        Snake(int grid_width, int grid_height)
-                : grid_width(grid_width),
-                  grid_height(grid_height),
-                  head_x(grid_width / 2),
-                  head_y(grid_height / 2) {}
+        Snake(const Board &_board);
 
         void Update();
 
         void GrowBody();
 
-        bool SnakeCell(int x, int y);
+        bool SnakeCell(const Snake_Cell &cell);
 
         Direction direction = Direction::kUp;
 
@@ -37,17 +57,16 @@ namespace snake {
         bool alive{true};
         float head_x;
         float head_y;
-        std::vector<Snake_Point> body;
+
+        std::shared_ptr<SyncQueue<Snake_Point>> _sync_queue;
 
     private:
         void UpdateHead();
 
-        void UpdateBody(Snake_Point
-        &current_cell, Snake_Point &prev_cell);
+        void UpdateBody(const Snake_Point &current_head_cell, const Snake_Point &prev_head_cell);
 
         bool growing{false};
-        int grid_width;
-        int grid_height;
+        Board board;
     };
 
 }

@@ -2,6 +2,7 @@
 #include "controller.h"
 #include "game.h"
 #include "renderer.h"
+#include "board.h"
 
 int main() {
     constexpr std::size_t kFramesPerSecond{60};
@@ -13,7 +14,8 @@ int main() {
 
     Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
     snake::Controller controller;
-    snake::Game game(kGridWidth, kGridHeight);
+    const snake::Board board = snake::Board(kGridWidth, kGridHeight);
+    snake::Game game(board);
     game.Run(controller, renderer, kMsPerFrame);
     std::cout << "Game has terminated successfully!\n";
     std::cout << "Score: " << game.GetScore() << "\n";
